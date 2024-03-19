@@ -63,6 +63,10 @@ class Frame {
     height = (json['height']).toDouble();
   }
 
+  get rotation => null;
+
+  set rotation(rotation) {}
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['x'] = this.x;

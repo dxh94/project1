@@ -15,6 +15,7 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
   List<dynamic> projects = [];
 
   Future<void> fetchProjects() async {
+
     final response =
     await http.get(Uri.parse('https://tapuniverse.com/xproject'));
     if (response.statusCode == 200) {
@@ -24,6 +25,8 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
     } else {
       throw Exception('Failed to load projects');
     }
+
+    print('===');
   }
 
   @override

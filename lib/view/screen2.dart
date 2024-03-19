@@ -56,14 +56,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Project Details'),
+
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deleteSelectedImage,
+          ),
+        ],
       ),
+      backgroundColor : Color(0xffE9EBFF),
       body: (_projectDetails == null)
           ? const Center(child: CircularProgressIndicator())
           : Container(
-        // onTapDown: _onTapDown,
-        // onTapUp: _onTapUp,
-        // onScaleStart: _onScaleStart,
-        // onScaleUpdate: _onScaleUpdate,
         child: Stack(
           children: _projectDetails!.photos!.map((item) {
             final index = _projectDetails!.photos!.indexOf(item);
@@ -77,9 +81,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               child: Stack(
                 children: [
                   GestureDetector(
-                    onScaleUpdate:
-                    (details ){
-                      _onScaleUpdate(details,index);
+                    onScaleUpdate: (details )
+                    {_onScaleUpdate(details,index);
                     },
                     onScaleStart: (details){
                       _onScaleStart(details,index);
@@ -98,7 +101,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         width: imageFrame.width!.toDouble(),
                         height: imageFrame.height!.toDouble(),
                         decoration: BoxDecoration(
-                          // color: Colors.red
                           border: Border.all(
                             color: Colors.blue,
                             width: 4.0,
@@ -115,15 +117,21 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  // void _onScaleStart(ScaleStartDetails details, int index) {
-  //   _previousScale = _scale;
-  //   _previousRotation = _rotation;
-  // }
+  void _deleteSelectedImage() {
+    if (_selectedImageIndex != null) {
+      setState(() {
+        _projectDetails!.photos!.removeAt(_selectedImageIndex!);
+        _selectedImageIndex = null;
+      });
+    }
+  }
+
   void _onScaleStart(ScaleStartDetails details, int index){
     _currentFrame = Frame(x: _projectDetails!.photos![index].frame!.x!,
         y: _projectDetails!.photos![index].frame!.y!,
         width: _projectDetails!.photos![index].frame!.width!,
         height: _projectDetails!.photos![index].frame!.height!);
+    _previousRotation = _projectDetails!.photos![index].frame!.rotation;
     setState(() {
 
     });
@@ -131,21 +139,25 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   void _onScaleUpdate(ScaleUpdateDetails details, int index) {
     print("_currentPhotos!.frame!.width! ${_currentFrame!.width}");
-    if (details.pointerCount ==1){
+    if (details.pointerCount == 1) {
       // di chuyen
       _projectDetails!.photos![index].frame!.x = _projectDetails!.photos![index].frame!.x! + details.focalPointDelta.dx;
-      _projectDetails!.photos![index].frame!.y =_projectDetails!.photos![index].frame!.y! +  details.focalPointDelta.dy;
-    }else if(details.pointerCount == 2) {
-      _projectDetails!.photos![index].frame!.width =  _currentFrame!.width! * details.scale;
+      _projectDetails!.photos![index].frame!.y = _projectDetails!.photos![index].frame!.y! + details.focalPointDelta.dy;
+    } else if (details.pointerCount == 2) {
+      _projectDetails!.photos![index].frame!.width = _currentFrame!.width! * details.scale;
       _projectDetails!.photos![index].frame!.height = _currentFrame!.height! * details.scale;
-      _projectDetails!.photos![index].frame!.x =  _currentFrame!.x!  +  (_currentFrame!.width! -  _projectDetails!.photos![index].frame!.width!)/2;
-      _projectDetails!.photos![index].frame!.y =  _currentFrame!.y!  +  (_currentFrame!.height! -  _projectDetails!.photos![index].frame!.height!)/2;
-
+      _projectDetails!.photos![index].frame!.x = _currentFrame!.x! + (_currentFrame!.width! - _projectDetails!.photos![index].frame!.width!) / 2;
+      _projectDetails!.photos![index].frame!.y = _currentFrame!.y! + (_currentFrame!.height! - _projectDetails!.photos![index].frame!.height!) / 2;
+      _projectDetails!.photos![index].frame!.rotation = _previousRotation + details.rotation;
+      setState(() {});
     }
     setState(() {
+      // _rotation = details.rotation;
+      // _scale = details.scale;
+      //
     });
-      // _scale = _previousScale * details.scale;
-      // _rotation = _previousRotation + details.rotation;
+    // _scale = _previousScale * details.scale;
+    // _rotation = _previousRotation + details.rotation;
 
   }
   void _onTapDown(TapDownDetails details) {
