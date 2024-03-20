@@ -90,14 +90,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     onScaleUpdate: (details )
                     {
                       if(isSelected)
-                     { _onScaleUpdate(details,index);}
+                      { _onScaleUpdate(details,index);}
                     },
 
                     onScaleStart: (details){
                       if(isSelected) {
-                              _onScaleStart(details, index);
-                            }
-                          },
+                        _onScaleStart(details, index);
+                      }
+                    },
                     onTap: () => _onImageTap(index),
                     child: Transform.rotate(
                       angle: imageFrame.rotation!,
@@ -109,9 +109,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: isSelected ?Colors.blue: Colors.transparent,
-                                  width: 4.0,)),
+                                  border: Border.all(
+                                    color: isSelected ?Colors.blue: Colors.transparent,
+                                    width: 4.0,)),
                               child: Image.network(
                                 imageUrl,
                                 width: imageFrame.width!.toDouble(),
@@ -121,27 +121,27 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             ),
 
                             Container(
-                               height: imageFrame.height! + 50,
+                              height: imageFrame.height! + 50,
                               width: imageFrame.width,
                               alignment: Alignment.topCenter,
                               child:
-                                (isSelected
-                            )
-                             ? GestureDetector(
+                              (isSelected
+                              )
+                                  ? GestureDetector(
                                 onTap: _deleteSelectedImage,
 
                                 child: Container(
                                   width: 30,
                                   height: 30,
                                   decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(999)
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(999)
 
 
                                   ),
                                   child: Center(
                                     child:  Icon(Icons.remove,
-                                    color: Colors.white),
+                                        color: Colors.white),
 
                                   ),
                                 ),
