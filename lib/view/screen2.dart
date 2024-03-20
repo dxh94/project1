@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import '../model/project_model.dart';
+import '../models/project_model.dart';
 
 
 class ProjectDetailsScreen extends StatefulWidget {
@@ -21,6 +20,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   double _rotation = 0.0;
   double _previousRotation = 0.0;
   int? _selectedImageIndex;
+  var _addImage;
 
   // Photos? _currentPhotos;
   Frame? _currentFrame;
@@ -28,7 +28,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       _projectDetails = await _fetchProjectDetails(widget.projectId);
       setState(() {});
     });
@@ -62,6 +62,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             icon: Icon(Icons.delete),
             onPressed: _deleteSelectedImage,
           ),
+          // IconButton(
+          //   icon: (Icons.add),
+          //   onPressed: _addImage,
+          // ),
         ],
       ),
       backgroundColor : Color(0xffE9EBFF),
@@ -88,11 +92,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       _onScaleStart(details,index);
                     },
                     onTap: () => _onImageTap(index),
+                    child: Transform.rotate(
+                        angle: _rotation,
+                    child: Transform.scale(scale: _scale,
+
                     child: Image.network(
                       imageUrl,
                       width: imageFrame.width!.toDouble(),
                       height: imageFrame.height!.toDouble(),
                       fit: BoxFit.cover,
+                    ),
+                    ),
                     ),
                   ),
                   if (isSelected)
@@ -114,8 +124,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           }).toList(),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addImage,
+        tooltip: 'Add photo',
+        child: Icon(Icons.add),
+      ),
     );
   }
+  // oid _addImage(){
+  //
+  // }v
+
 
   void _deleteSelectedImage() {
     if (_selectedImageIndex != null) {
@@ -160,31 +179,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     // _rotation = _previousRotation + details.rotation;
 
   }
-  void _onTapDown(TapDownDetails details) {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    final localOffset = box.globalToLocal(details.globalPosition);
-    setState(() {
-      _selectedImageIndex = _getTappedImageIndex(localOffset);
-    });
-  }
-  void _onTapUp(TapUpDetails details) {
-    setState(() {
-      _selectedImageIndex = null;
-    });
-  }
 
-  int? _getTappedImageIndex(Offset localOffset) {
-    for (int i = 0; i < _projectDetails!.photos!.length; i++) {
-      final imageFrame = _projectDetails!.photos![i].frame!;
-      if (localOffset.dx >= imageFrame.x! &&
-          localOffset.dx <= imageFrame.x! + imageFrame.width! &&
-          localOffset.dy >= imageFrame.y! &&
-          localOffset.dy <= imageFrame.y! + imageFrame.height!) {
-        return i;
-      }
-    }
-    return null;
-  }
   void _onImageTap(int index) {
     setState(() {
       _selectedImageIndex = index;
