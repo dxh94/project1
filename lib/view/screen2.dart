@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../model/project_model.dart';
+
 
 
 class ProjectDetailsScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   double _rotation = 0.0;
   double _previousRotation = 0.0;
   int? _selectedImageIndex;
+  var _addImage;
 
   // Photos? _currentPhotos;
   Frame? _currentFrame;
@@ -28,7 +30,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       _projectDetails = await _fetchProjectDetails(widget.projectId);
       setState(() {});
     });
@@ -58,10 +60,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         title: const Text('Project Details'),
 
         actions: [
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: _deleteSelectedImage,
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.delete),
+          //   onPressed: _deleteSelectedImage,
+          // ),
+          // IconButton(
+          //   icon: (Icons.add),
+          //   onPressed: _addImage,
+          // ),
         ],
       ),
       backgroundColor : Color(0xffE9EBFF),
@@ -82,40 +88,101 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 children: [
                   GestureDetector(
                     onScaleUpdate: (details )
-                    {_onScaleUpdate(details,index);
+                    {
+                      if(isSelected)
+                     { _onScaleUpdate(details,index);}
                     },
+
                     onScaleStart: (details){
-                      _onScaleStart(details,index);
-                    },
+                      if(isSelected) {
+                              _onScaleStart(details, index);
+                            }
+                          },
                     onTap: () => _onImageTap(index),
-                    child: Image.network(
-                      imageUrl,
-                      width: imageFrame.width!.toDouble(),
-                      height: imageFrame.height!.toDouble(),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  if (isSelected)
-                    IgnorePointer(
-                      child: Container(
-                        width: imageFrame.width!.toDouble(),
-                        height: imageFrame.height!.toDouble(),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 4.0,
-                          ),
+                    child: Transform.rotate(
+                      angle: imageFrame.rotation!,
+                      child: Transform.scale(scale: _scale,
+
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: isSelected ?Colors.blue: Colors.transparent,
+                                  width: 4.0,)),
+                              child: Image.network(
+                                imageUrl,
+                                width: imageFrame.width!.toDouble(),
+                                height: imageFrame.height!.toDouble(),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+
+                            Container(
+                               height: imageFrame.height! + 50,
+                              width: imageFrame.width,
+                              alignment: Alignment.topCenter,
+                              child:
+                                (isSelected
+                            )
+                             ? GestureDetector(
+                                onTap: _deleteSelectedImage,
+
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(999)
+
+
+                                  ),
+                                  child: Center(
+                                    child:  Icon(Icons.remove,
+                                    color: Colors.white),
+
+                                  ),
+                                ),
+                              ):SizedBox(),
+                            ),
+                          ],
                         ),
                       ),
                     ),
+                  ),
+                  // if (isSelected)
+                  //   IgnorePointer(
+                  //     child: Container(
+                  //       width: imageFrame.width!.toDouble(),
+                  //       height: imageFrame.height!.toDouble(),
+                  //       decoration: BoxDecoration(
+                  //         border: Border.all(
+                  //           color: Colors.blue,
+                  //           width: 4.0,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //
                 ],
               ),
             );
           }).toList(),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addImage,
+        tooltip: 'Add photo',
+        child: Icon(Icons.add),
+      ),
     );
   }
+  // oid _addImage(){
+  //
+  // }v
+
 
   void _deleteSelectedImage() {
     if (_selectedImageIndex != null) {
@@ -131,7 +198,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         y: _projectDetails!.photos![index].frame!.y!,
         width: _projectDetails!.photos![index].frame!.width!,
         height: _projectDetails!.photos![index].frame!.height!);
-    _previousRotation = _projectDetails!.photos![index].frame!.rotation;
+    _previousRotation = _projectDetails!.photos![index].frame!.rotation!;
     setState(() {
 
     });
@@ -160,31 +227,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     // _rotation = _previousRotation + details.rotation;
 
   }
-  void _onTapDown(TapDownDetails details) {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    final localOffset = box.globalToLocal(details.globalPosition);
-    setState(() {
-      _selectedImageIndex = _getTappedImageIndex(localOffset);
-    });
-  }
-  void _onTapUp(TapUpDetails details) {
-    setState(() {
-      _selectedImageIndex = null;
-    });
-  }
 
-  int? _getTappedImageIndex(Offset localOffset) {
-    for (int i = 0; i < _projectDetails!.photos!.length; i++) {
-      final imageFrame = _projectDetails!.photos![i].frame!;
-      if (localOffset.dx >= imageFrame.x! &&
-          localOffset.dx <= imageFrame.x! + imageFrame.width! &&
-          localOffset.dy >= imageFrame.y! &&
-          localOffset.dy <= imageFrame.y! + imageFrame.height!) {
-        return i;
-      }
-    }
-    return null;
-  }
   void _onImageTap(int index) {
     setState(() {
       _selectedImageIndex = index;

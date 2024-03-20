@@ -53,19 +53,22 @@ class Frame {
   double? y;
   double? width;
   double? height;
+  double? scale;
+  double? rotation;
 
-  Frame({this.x, this.y, this.width, this.height});
+  Frame({this.x, this.y, this.width, this.height, this.rotation, this.scale});
 
   Frame.fromJson(Map<String, dynamic> json) {
     x =( json['x']).toDouble();
     y = (json['y']).toDouble();
     width = (json['width']).toDouble();
     height = (json['height']).toDouble();
+    scale = 1;
+   rotation = 0;
+
   }
 
-  get rotation => null;
 
-  set rotation(rotation) {}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
