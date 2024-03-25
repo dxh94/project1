@@ -132,7 +132,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                           borderRadius: BorderRadius.circular(8.0),
                                           child: Stack(
                                             children: [
-                                              Image(image: image),
                                               Image.network(() {
                                                   print("100 ${imageUrl}");
                                                   return imageUrl;
