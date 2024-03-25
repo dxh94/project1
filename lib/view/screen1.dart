@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chinhanh/model/project_model.dart';
 import 'package:chinhanh/view/screen2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +13,24 @@ class ProjectListWidget extends StatefulWidget {
 }
 
 class _ProjectListWidgetState extends State<ProjectListWidget> {
-  List<dynamic> projects = [];
+  List<ProjectModel> projects = [];
 
   Future<void> fetchProjects() async {
 
     final response =
     await http.get(Uri.parse('https://tapuniverse.com/xproject'));
     if (response.statusCode == 200) {
+      List abc = json.decode(response.body)['projects'];
+
+      for (int i =0 ;i <abc.length ; i++) {
+        projects.add(ProjectModel.fromJson(abc[i]));
+      }
+      print(projects[0].photos);
       setState(() {
-        projects = json.decode(response.body)['projects'];
       });
     } else {
       throw Exception('Failed to load projects');
     }
-
     print('===');
   }
 
@@ -37,7 +42,7 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
 
   void addProject(String projectName) {
     setState(() {
-      projects.add({'name': projectName, 'id': projects.length + 1});
+      projects.add(ProjectModel(name: projectName ,id: projects.length +1, photos: []));
     });
   }
 
@@ -49,7 +54,7 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
 
   void editProject(int index, String newName) {
     setState(() {
-      projects[index]['name'] = newName;
+      projects[index].name = newName;
     });
   }
 
@@ -66,10 +71,11 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
               itemCount: projects.length,
               itemBuilder: (BuildContext context, int index) {
                 return Dismissible(
-                  key: Key(projects[index]['id'].toString()),
+                  key: Key(projects[index].id.toString()),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     removeProject(index);
+
                   },
                   background: Container(
                     color: Colors.white,
@@ -82,14 +88,15 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
                   ),
                   child: Card(
                     child: ListTile(
-                      title: Text(projects[index]['name']),
-                      subtitle: Text('ID: ${projects[index]['id']}'),
+                      title: Text(projects[index].name!),
+                      subtitle: Text('ID: ${projects[index].id}'),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProjectDetailsScreen(
-                              projectId: projects[index]['id'],
+                              projectId: projects[index].id!, projects: projects,
+
                             ),
                           ),
                         );

@@ -4,8 +4,10 @@ class ProjectModel {
   List<Photos>? photos;
 
   ProjectModel({this.name, this.id, this.photos});
+  bool isCheckProject = false;
 
   ProjectModel.fromJson(Map<String, dynamic> json) {
+    print(json);
     name = json['name'];
     id = json['id'];
     if (json['photos'] != null) {
@@ -13,6 +15,9 @@ class ProjectModel {
       json['photos'].forEach((v) {
         photos!.add(new Photos.fromJson(v));
       });
+    }
+    else {
+      photos = [];
     }
   }
 
@@ -37,7 +42,6 @@ class Photos {
     url = json['url'];
     frame = json['frame'] != null ? new Frame.fromJson(json['frame']) : null;
   }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
