@@ -35,8 +35,9 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
   }
   void addProject(String projectName) {
     setState(() {
-      projects.add(
-          ProjectModel(name: projectName, id: projects.length + 1, photos: []));
+      ProjectModel newProject = ProjectModel(name: projectName, id: projects.length + 1, photos: []);
+      newProject.isCheckProject = true;
+      projects.add(newProject);
     });
   }
   void removeProject(int index) {
@@ -44,7 +45,6 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
       projects.removeAt(index);
     });
   }
-
   void editProject(int index, String newName) {
     setState(() {
       projects[index].name = newName;
