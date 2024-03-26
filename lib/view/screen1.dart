@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:chinhanh/model/project_model.dart';
 import 'package:chinhanh/view/screen2.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,41 +10,35 @@ class ProjectListWidget extends StatefulWidget {
   @override
   _ProjectListWidgetState createState() => _ProjectListWidgetState();
 }
-
 class _ProjectListWidgetState extends State<ProjectListWidget> {
   List<ProjectModel> projects = [];
 
   Future<void> fetchProjects() async {
-
     final response =
     await http.get(Uri.parse('https://tapuniverse.com/xproject'));
     if (response.statusCode == 200) {
       List abc = json.decode(response.body)['projects'];
 
-      for (int i =0 ;i <abc.length ; i++) {
+      for (int i = 0; i < abc.length; i++) {
         projects.add(ProjectModel.fromJson(abc[i]));
       }
       print(projects[0].photos);
-      setState(() {
-      });
+      setState(() {});
     } else {
       throw Exception('Failed to load projects');
     }
-    print('===');
   }
-
   @override
   void initState() {
     super.initState();
     fetchProjects();
   }
-
   void addProject(String projectName) {
     setState(() {
-      projects.add(ProjectModel(name: projectName ,id: projects.length +1, photos: []));
+      projects.add(
+          ProjectModel(name: projectName, id: projects.length + 1, photos: []));
     });
   }
-
   void removeProject(int index) {
     setState(() {
       projects.removeAt(index);
@@ -57,7 +50,6 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
       projects[index].name = newName;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +67,6 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     removeProject(index);
-
                   },
                   background: Container(
                     color: Colors.white,
@@ -89,14 +80,13 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
                   child: Card(
                     child: ListTile(
                       title: Text(projects[index].name!),
-                      subtitle: Text('ID: ${projects[index].id}'),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProjectDetailsScreen(
-                              projectId: projects[index].id!, projects: projects,
-
+                              projectId: projects[index].id!,
+                              projects: projects,
                             ),
                           ),
                         );
@@ -107,8 +97,10 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
               },
             ),
           ),
+          SizedBox(height: 20),
           Container(
-            margin: EdgeInsets.all(20.0),
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
                 showDialog(
@@ -119,7 +111,8 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
                       content: TextField(
                         autofocus: true,
                         decoration: const InputDecoration(
-                            labelText: 'Project Name'),
+                          labelText: 'Project Name',
+                        ),
                         onSubmitted: (String value) {
                           addProject(value);
                           Navigator.pop(context);
@@ -129,7 +122,17 @@ class _ProjectListWidgetState extends State<ProjectListWidget> {
                   },
                 );
               },
-              child: const Text('Add Project'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                'Add Project',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ],

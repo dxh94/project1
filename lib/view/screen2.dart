@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -10,12 +9,11 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../model/project_model.dart';
 
+
 class ProjectDetailsScreen extends StatefulWidget {
   final int projectId;
   List projects;
   ProjectDetailsScreen({Key? key, required this.projectId,required this.projects}) : super(key: key);
-
-
   @override
   _ProjectDetailsScreenState createState() => _ProjectDetailsScreenState();
 }
@@ -23,21 +21,18 @@ class ProjectDetailsScreen extends StatefulWidget {
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   ProjectModel? _projectDetails;
   double _scale = 1.0;
-  double _previousScale = 1.0;
-  double _rotation = 0.0;
   double _previousRotation = 0.0;
   int? _selectedImageIndex;
-  var _addImage;
   Frame? _currentFrame;
   File? selectedimage;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       ProjectModel? a = null;
-      for(int i=0;i<widget.projects.length;i++){
-        if (widget.projects[i].id==widget.projectId && widget.projects[i].isCheckProject == true) {
+      for (int i = 0; i < widget.projects.length; i++) {
+        if (widget.projects[i].id == widget.projectId &&
+            widget.projects[i].isCheckProject == true) {
           a = widget.projects[i];
         }
       }
@@ -49,7 +44,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       setState(() {});
     });
   }
-
   Future<ProjectModel> _fetchProjectDetails(int projectId) async {
     print({'id': projectId.toString()});
     final response = await http.post(
@@ -67,20 +61,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       throw Exception('Failed to load project details');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Project Details'),
-      //
-      // ),
       backgroundColor: Color(0xffE9EBFF),
       body:
-      Container(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: MediaQuery.of(context).padding.bottom ),
+      Container(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, bottom: MediaQuery.of(context).padding.bottom),
         child: Column(
           children: [
-            Align( alignment: Alignment.centerLeft, child: TextButton(onPressed: _onback, child:Text("back",style: TextStyle(color: Colors.black),))),
+            Align(alignment: Alignment.centerLeft,
+                child: TextButton(onPressed: _onback,
+                    child: Text(
+                      "back", style: TextStyle(color: Colors.black),))),
             Expanded(
               child: Container(
                 child: (_projectDetails == null)
@@ -126,28 +118,31 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                 : Colors.transparent,
                                             width: 4.0,
                                           ),
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius: BorderRadius.circular(
+                                              12.0),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
+                                          borderRadius: BorderRadius.circular(
+                                              8.0),
                                           child: Stack(
                                             children: [
                                               Image.network(() {
-                                                  print("100 ${imageUrl}");
-                                                  return imageUrl;
-                                                }(),
-                                                width: imageFrame.width!.toDouble(),
-                                                height: imageFrame.height!.toDouble(),
+                                                return imageUrl;
+                                              }(),
+                                                width: imageFrame.width!
+                                                    .toDouble(),
+                                                height: imageFrame.height!
+                                                    .toDouble(),
                                                 fit: BoxFit.cover,
                                               ),
-                                              if (isSelected)
-                                                _buildCornerCircle(-8, -8), // Góc trên bên trái
-                                              if (isSelected)
-                                                _buildCornerCircle(imageFrame.width! - 16, 0), // Góc trên bên phải
-                                              if (isSelected)
-                                                _buildCornerCircle(0, imageFrame.height! - 16), // Góc dưới bên trái
-                                              if (isSelected)
-                                                _buildCornerCircle(imageFrame.width! - 16, imageFrame.height! - 16), // Góc dưới bên phải
+                                              if (isSelected)_buildCornerCircle(-8, -8),
+                                              // Góc trên bên trái
+                                              if (isSelected)_buildCornerCircle(imageFrame.width!  -6 , -5),
+                                              // Góc trên bên phải
+                                              if (isSelected)_buildCornerCircle(-5, imageFrame.height! - 6),
+                                              // Góc dưới bên trái
+                                              if (isSelected)_buildCornerCircle(imageFrame.width! - 8, imageFrame.height! - 8),
+                                              // Góc dưới bên phải
                                             ],
                                           ),
                                         ),
@@ -191,14 +186,23 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pickImageFromGallery,
-        tooltip: 'Add photo',
-        child: Icon(Icons.add),
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 0.0),
+        child: FloatingActionButton.extended(
+          onPressed: _pickImageFromGallery,
+          label: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 100.0),
+            child: Text(
+              'Add Photo',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          backgroundColor: Colors.blue,
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
   Widget _buildCornerCircle(double left, double top) {
     return Positioned(
       left: left,
@@ -213,7 +217,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ),
     );
   }
-
   void _deleteSelectedImage() {
     if (_selectedImageIndex != null) {
       setState(() {
@@ -222,7 +225,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       });
     }
   }
-
   void _onScaleStart(ScaleStartDetails details, int index) {
     _currentFrame = Frame(
         x: _projectDetails!.photos![index].frame!.x!,
@@ -232,7 +234,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     _previousRotation = _projectDetails!.photos![index].frame!.rotation!;
     setState(() {});
   }
-
   void _onScaleUpdate(ScaleUpdateDetails details, int index) {
     print("_currentPhotos!.frame!.width! ${_currentFrame!.width}");
     if (details.pointerCount == 1) {
@@ -246,10 +247,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       _projectDetails!.photos![index].frame!.rotation = _previousRotation + details.rotation;
       setState(() {});
     }
-    setState(() {
-
-    });
-
+    setState(() {});
   }
 
   void _onImageTap(int index) {
@@ -259,18 +257,27 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   void _onback() {
-    for(int i =0 ;i <widget.projects.length ; i++){
-      if(_projectDetails!.id == widget.projects[i].id){
-        widget.projects[i] = _projectDetails!..isCheckProject = true;
+    for (int i = 0; i < widget.projects.length; i++) {
+      if (_projectDetails!.id == widget.projects[i].id) {
+        widget.projects[i] = _projectDetails!
+          ..isCheckProject = true;
       }
     }
     Navigator.of(context).pop();
   }
-
-  Future _pickImageFromGallery () async {
-    final returnImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    // _projectDetails?.photos?.add(Photos({returnImage!.path, Frame(100, 100, 200, 200)});
-
+  Future _pickImageFromGallery() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      if (File(pickedImage.path).existsSync()) {
+        final newPhoto = Photos(url: pickedImage.path, frame: Frame(x: 100, y: 100, width: 200, height: 200, rotation: 0));
+        setState(() {
+          _projectDetails?.photos?.add(newPhoto);
+        });
+      } else {
+        print("Invalid image path: ${pickedImage.path}");
+      }
+    }
   }
+
 }
