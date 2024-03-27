@@ -17,6 +17,13 @@ class ProjectDetailsScreen extends StatefulWidget {
   @override
   _ProjectDetailsScreenState createState() => _ProjectDetailsScreenState();
 }
+Image _buildImage(String url, bool isInternetImage) {
+  if (isInternetImage) {
+    return Image.network(url);
+  } else {
+    return Image.file(File(url));
+  }
+}
 
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   ProjectModel? _projectDetails;
@@ -72,7 +79,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             Align(alignment: Alignment.centerLeft,
                 child: TextButton(onPressed: _onback,
                     child: Text(
-                      "back", style: TextStyle(color: Colors.black),))),
+                      "back", style:
+                    TextStyle(
+                        color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),))),
             Expanded(
               child: Container(
                 child: (_projectDetails == null)
@@ -135,14 +147,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                     .toDouble(),
                                                 fit: BoxFit.cover,
                                               ),
-                                              if (isSelected)_buildCornerCircle(-8, -8),
-                                              // Góc trên bên trái
-                                              if (isSelected)_buildCornerCircle(imageFrame.width!  -6 , -5),
-                                              // Góc trên bên phải
-                                              if (isSelected)_buildCornerCircle(-5, imageFrame.height! - 6),
-                                              // Góc dưới bên trái
-                                              if (isSelected)_buildCornerCircle(imageFrame.width! - 8, imageFrame.height! - 8),
-                                              // Góc dưới bên phải
+                                              // if (isSelected)_buildCornerCircle(-8, -8),
+                                              // // Góc trên bên trái
+                                              // if (isSelected)_buildCornerCircle(imageFrame.width!  -6 , -5),
+                                              // // Góc trên bên phải
+                                              // if (isSelected)_buildCornerCircle(-5, imageFrame.height! - 6),
+                                              // // Góc dưới bên trái
+                                              // if (isSelected)_buildCornerCircle(imageFrame.width! - 8, imageFrame.height! - 8),
+                                              // // Góc dưới bên phải
                                             ],
                                           ),
                                         ),
@@ -203,20 +215,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-  Widget _buildCornerCircle(double left, double top) {
-    return Positioned(
-      left: left,
-      top: top,
-      child: Container(
-        width: 16,
-        height: 16,
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
+  // Widget _buildCornerCircle(double left, double top) {
+  //   return Positioned(
+  //     left: left,
+  //     top: top,
+  //     child: Container(
+  //       width: 16,
+  //       height: 16,
+  //       decoration: BoxDecoration(
+  //         color: Colors.blue,
+  //         shape: BoxShape.circle,
+  //       ),
+  //     ),
+  //   );
+  // }
   void _deleteSelectedImage() {
     if (_selectedImageIndex != null) {
       setState(() {
@@ -249,13 +261,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     }
     setState(() {});
   }
-
   void _onImageTap(int index) {
     setState(() {
       _selectedImageIndex = index;
     });
   }
-
   void _onback() {
     for (int i = 0; i < widget.projects.length; i++) {
       if (_projectDetails!.id == widget.projects[i].id) {

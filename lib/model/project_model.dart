@@ -35,19 +35,27 @@ class ProjectModel {
 class Photos {
   String? url;
   Frame? frame;
+  bool? isInternetImage;
+  Photos({this.url, this.frame, this.isInternetImage});
 
-  Photos({this.url, this.frame});
-
-  Photos.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    frame = json['frame'] != null ? new Frame.fromJson(json['frame']) : null;
+  // Photos({this.url, this.frame});
+  factory Photos.fromJson(Map<String, dynamic> json) {
+    return Photos(
+      url: json['url'],
+      frame: Frame.fromJson(json['frame']),
+      isInternetImage: json['isInternetImage'] ?? true, // Mặc định là true nếu không được cung cấp
+    );
   }
+
+  // Photos.fromJson(Map<String, dynamic> json) {
+  //   url = json['url'];
+  //   frame = json['frame'] != null ? new Frame.fromJson(json['frame']) : null;
+  // }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
-    if (this.frame != null) {
-      data['frame'] = this.frame!.toJson();
-    }
+    data['frame'] = this.frame!.toJson();
+    data['isInternetImage'] = this.isInternetImage;
     return data;
   }
 }
