@@ -138,12 +138,24 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                               8.0),
                                           child: Stack(
                                             children: [
-                                              Image.network(() {
-                                                return imageUrl;
-                                              }(),
-                                                width: imageFrame.width!
+                                              imageUrl.contains("http://")|| imageUrl.contains("https://")
+                                                  ? Image.network(
+                                                imageUrl,
+                                                width: imageFrame
+                                                    .width!
                                                     .toDouble(),
-                                                height: imageFrame.height!
+                                                height: imageFrame
+                                                    .height!
+                                                    .toDouble(),
+                                                fit: BoxFit.cover,
+                                              )
+                                                  : Image.file(
+                                                File(imageUrl),
+                                                width: imageFrame
+                                                    .width!
+                                                    .toDouble(),
+                                                height: imageFrame
+                                                    .height!
                                                     .toDouble(),
                                                 fit: BoxFit.cover,
                                               ),
